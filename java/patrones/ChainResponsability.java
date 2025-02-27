@@ -3,7 +3,6 @@ package java.patrones;
 import java.util.List;
 import java.util.Map;
 
-// Interfaz base Handler
 abstract class OrderHandler {
     private OrderHandler nextHandler;
 
@@ -24,7 +23,6 @@ abstract class OrderHandler {
     }
 }
 
-// Manejador de validación de la orden
 class OrderValidationHandler extends OrderHandler {
     public OrderValidationHandler(OrderHandler nextHandler) {
         super(nextHandler);
@@ -40,7 +38,6 @@ class OrderValidationHandler extends OrderHandler {
     }
 }
 
-// Manejador de verificación de stock
 class StockCheckHandler extends OrderHandler {
     public StockCheckHandler(OrderHandler nextHandler) {
         super(nextHandler);
@@ -48,10 +45,9 @@ class StockCheckHandler extends OrderHandler {
 
     @Override
     public String handle(Map<String, Object> order) {
-        // Comprobación de tipo antes de hacer el cast
         Object itemsObj = order.get("items");
         if (itemsObj instanceof List<?>) {
-            List<?> items = (List<?>) itemsObj; // Uso de un cast sin advertencias
+            List<?> items = (List<?>) itemsObj; 
             for (Object itemObj : items) {
                 if (itemObj instanceof Map<?, ?>) {
                     Map<?, ?> item = (Map<?, ?>) itemObj;
@@ -69,7 +65,6 @@ class StockCheckHandler extends OrderHandler {
     }
 }
 
-// Manejador de pago
 class PaymentHandler extends OrderHandler {
     public PaymentHandler(OrderHandler nextHandler) {
         super(nextHandler);
@@ -85,7 +80,6 @@ class PaymentHandler extends OrderHandler {
     }
 }
 
-// Manejador de envío
 class ShippingHandler extends OrderHandler {
     public ShippingHandler(OrderHandler nextHandler) {
         super(nextHandler);
@@ -103,7 +97,6 @@ class ShippingHandler extends OrderHandler {
 
 public class ChainResponsability {
     public static void main(String[] args) {
-        // Crear una orden de ejemplo
         Map<String, Object> order = Map.of(
             "items", List.of(
                 Map.of("name", "Laptop", "stock", 10),
@@ -113,7 +106,6 @@ public class ChainResponsability {
             "address", "123 Calle Ficticia, Ciudad"
         );
 
-        // Configurar la cadena de responsabilidad
         OrderValidationHandler orderValidationHandler = new OrderValidationHandler(null);
         StockCheckHandler stockCheckHandler = new StockCheckHandler(null);
         PaymentHandler paymentHandler = new PaymentHandler(null);
@@ -123,10 +115,8 @@ public class ChainResponsability {
                 .setNext(paymentHandler)
                 .setNext(shippingHandler);
 
-        // Procesar la orden a través de la cadena
         String result = orderValidationHandler.handle(order);
 
-        // Mostrar el resultado
         System.out.println(result);
     }
 }
